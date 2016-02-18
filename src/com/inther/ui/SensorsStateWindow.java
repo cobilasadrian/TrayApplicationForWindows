@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.inther.main.JsonParser;
 import com.inther.main.Message;
+import static com.inther.model.AppConfig.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
@@ -38,16 +39,17 @@ public class SensorsStateWindow extends JFrame {
 	private BufferedImage ledBW = ImageIO.read(new File("src/com/inther/resources/ledb&w.png"));
 	
 	private JPanel contentPane;
+	private JPanel panel;
 	private JLabel lblMotionImg;
 	private JLabel lblLightImg;
 	private JLabel lblState1;
 	private JLabel lblState2;
 	private JLabel ledLabel;
-
+	
 	/**
 	 * SensorsStateWindow constructor create the frame.
 	 */
-	public SensorsStateWindow(boolean pirSensorVal, int lightSensorVal) throws IOException {
+	public SensorsStateWindow() throws IOException {
 		this.setVisible(true);
 		this.setTitle("Sensors state");
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -55,7 +57,7 @@ public class SensorsStateWindow extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		contentPane = new JPanel();
-		contentPane.setBackground(Color.WHITE);
+		contentPane.setBackground(Color.LIGHT_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
@@ -74,8 +76,8 @@ public class SensorsStateWindow extends JFrame {
 		ledLabel = new JLabel(new ImageIcon(ledBW));
 		
 		//Create a JPanel and add it in GroupLayout with ledLabel
-		JPanel panel = new JPanel();
-		panel.setBackground(Color.WHITE);
+		panel = new JPanel();
+		panel.setBackground(Color.LIGHT_GRAY);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -96,7 +98,6 @@ public class SensorsStateWindow extends JFrame {
 		//Set GridLayout for panel
 		panel.setLayout(new GridLayout(3,2));
 		
-
 		JLabel lblMotion = new JLabel("Motion");
 		lblMotion.setVerticalAlignment(SwingConstants.TOP);
 		lblMotion.setHorizontalAlignment(SwingConstants.CENTER);
@@ -108,39 +109,21 @@ public class SensorsStateWindow extends JFrame {
 		lblLight.setHorizontalAlignment(SwingConstants.CENTER);
 		lblLight.setFont(new Font("Segoe UI", Font.BOLD, 18));
 		panel.add(lblLight);
-		
-		//Set lblMotionImg and lblState1 value depending on the pirSensorVal received 
-		if(pirSensorVal==true){
-			lblMotionImg = new JLabel(new ImageIcon(motion));
-			lblState1 = new JLabel("is detected");
-		}
-		else {
-			lblMotionImg = new JLabel(new ImageIcon(motionBW));
-			lblState1 = new JLabel("not detected");
-		}
-		
+	
+		lblMotionImg = new JLabel(new ImageIcon(motionBW));
 		lblMotionImg.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblMotionImg);
 		
-		//Set lblLightImg and lblState2 value depending on the lightSensorVal received 
-		if(lightSensorVal<50){
-			lblLightImg = new JLabel(new ImageIcon(lightBW));
-			lblState2 = new JLabel("not detected");
-		}
-		else {
-			lblLightImg = new JLabel(new ImageIcon(light));
-			lblState2 = new JLabel("is detected");
-		}
-		
-		lblLightImg = new JLabel(new ImageIcon(light));
+		lblLightImg = new JLabel(new ImageIcon(lightBW));
 		lblLightImg.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblLightImg);
 		
+		lblState1 = new JLabel("not detected");
 		lblState1.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		lblState1.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblState1);
 		
-		
+		lblState2 = new JLabel("not detected");
 		lblState2.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 		lblState2.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblState2);
@@ -148,40 +131,54 @@ public class SensorsStateWindow extends JFrame {
 		//Execute periodic parsing operation and modifying data
 		Timer time = new Timer(); //Instantiate Timer Object
 		ScheduledTask st = new ScheduledTask(); //Instantiate SheduledTask class
-		time.schedule(st, 0, 5000); //Create Repetitively task for every 5 secs
+		time.schedule(st, 0, 5000); //Create Repetitively task for every 5 secs	
 			
-	}
+	}	
 	
 	class ScheduledTask extends TimerTask {
-
 		public void run() {
-			Message message = new JsonParser().parseJsonFromUrl("http://172.17.41.117:8080/RESTService_v2/sensor/current/"); //Receive message from Json
-			//make the LED blink for a second
-			try {
-				ledLabel.setIcon(new ImageIcon(led));
-				Thread.sleep(1000);
+			
+			Message message = new JsonParser().parseJsonFromUrl(URL); //Receive message from Json
+			
+			if(message !=null){
+				contentPane.setBackground(Color.WHITE);
+				panel.setBackground(Color.WHITE);
+				//make the LED blink for a second
+				try {
+					ledLabel.setIcon(new ImageIcon(led));
+					Thread.sleep(1000);
+					ledLabel.setIcon(new ImageIcon(ledBW));
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//Set lblMotionImg and lblState1 value depending on the pirSensorVal received 
+				if(message.getPirSensorVal()==true){
+					lblMotionImg.setIcon(new ImageIcon(motion));
+					lblState1.setText("is detected");
+				}
+				else {
+					lblMotionImg.setIcon(new ImageIcon(motionBW));
+					lblState1.setText("not detected");	
+				}
+				//Set lblLightImg and lblState2 value depending on the lightSensorVal received 
+				if(message.getLightSensorVal()<50){
+					lblLightImg.setIcon(new ImageIcon(lightBW));
+					lblState2.setText("not detected");
+				}
+				else {
+					lblLightImg.setIcon(new ImageIcon(light));
+					lblState2.setText("is detected");
+				}
+			} else{
+				//Set window components in disabled state
+				contentPane.setBackground(Color.LIGHT_GRAY);
+				panel.setBackground(Color.LIGHT_GRAY);
 				ledLabel.setIcon(new ImageIcon(ledBW));
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//Set lblMotionImg and lblState1 value depending on the pirSensorVal received 
-			if(message.getPirSensorVal()==true){
-				lblMotionImg.setIcon(new ImageIcon(motion));
-				lblState1.setText("is detected");
-			}
-			else {
 				lblMotionImg.setIcon(new ImageIcon(motionBW));
-				lblState1.setText("not detected");	
-			}
-			//Set lblLightImg and lblState2 value depending on the lightSensorVal received 
-			if(message.getLightSensorVal()<50){
+				lblState1.setText("not detected");
 				lblLightImg.setIcon(new ImageIcon(lightBW));
-				lblState2.setText("not detected");
-			}
-			else {
-				lblLightImg.setIcon(new ImageIcon(light));
-				lblState2.setText("is detected");
+				lblState2.setText("not detected");				
 			}
 		}
 	}

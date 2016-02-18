@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.inther.main.JsonParser;
 import com.inther.main.Message;
+import static com.inther.model.AppConfig.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
@@ -34,6 +35,7 @@ public class HeartbeatWindow extends JFrame {
 	private BufferedImage ledBW = ImageIO.read(new File("src/com/inther/resources/ledb&w.png"));
 	
 	private JPanel contentPane;
+	private JPanel panel;
 	private JLabel lblHeartbeat;
 	private JLabel lblTimeReceived;
 	private JLabel ledLabel;
@@ -41,7 +43,7 @@ public class HeartbeatWindow extends JFrame {
 	/**
 	 * HeartbeatWindow constructor create the frame.
 	 */
-	public HeartbeatWindow(boolean isHeartbeat, String timeReceived) throws IOException {
+	public HeartbeatWindow() throws IOException {
 		this.setVisible(true);
 		this.setTitle("Heartbeat");
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -49,7 +51,7 @@ public class HeartbeatWindow extends JFrame {
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
 		contentPane = new JPanel();
-		contentPane.setBackground(Color.WHITE);
+		contentPane.setBackground(Color.LIGHT_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
@@ -65,8 +67,8 @@ public class HeartbeatWindow extends JFrame {
 		ledLabel = new JLabel(new ImageIcon(ledBW));
 		
 		//Create a JPanel and add it in GroupLayout with ledLabel
-		JPanel panel = new JPanel();
-		panel.setBackground(Color.WHITE);
+		panel = new JPanel();
+		panel.setBackground(Color.LIGHT_GRAY);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -88,13 +90,13 @@ public class HeartbeatWindow extends JFrame {
 		panel.setLayout(new GridLayout(3,2));
 		
 		//Set isHeartbeat value for lblHeartbeat
-		lblHeartbeat = new JLabel("Heartbeat value is "+isHeartbeat+", received on:");
+		lblHeartbeat = new JLabel("Heartbeat value is null, received on:");
     	lblHeartbeat.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 		lblHeartbeat.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblHeartbeat);
 		
 		//Set timeReceived value for lblHeartbeat
-		lblTimeReceived = new JLabel(timeReceived);
+		lblTimeReceived = new JLabel("0000-00-00 00:00:00");
 		lblTimeReceived.setFont(new Font("Segoe UI", Font.BOLD, 18));
 		lblTimeReceived.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblTimeReceived);
@@ -107,21 +109,37 @@ public class HeartbeatWindow extends JFrame {
 	}
 	
 	class ScheduledTask extends TimerTask {
-
 		public void run() {
-			Message message = new JsonParser().parseJsonFromUrl("http://172.17.41.117:8080/RESTService_v2/sensor/current/"); //Receive message from Json
-			//Set isHeartbeat value for lblHeartbeat
-			lblHeartbeat.setText("Heartbeat value is "+message.isHeartbeat()+", received on:");
-			//Set timeReceived value for lblHeartbeat
-		    lblTimeReceived.setText(message.getTimeReceived());
-		    //make the LED blink for a second
-			try {
-				ledLabel.setIcon(new ImageIcon(led));
-				Thread.sleep(1000);
+			
+			Message message = new JsonParser().parseJsonFromUrl(URL); //Receive message from Json
+			
+			if(message !=null){
+				contentPane.setBackground(Color.WHITE);
+				panel.setBackground(Color.WHITE);
+				
+				//make the LED blink for a second
+				try {
+					ledLabel.setIcon(new ImageIcon(led));
+					Thread.sleep(1000);
+					ledLabel.setIcon(new ImageIcon(ledBW));
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				//Set isHeartbeat value for lblHeartbeat
+				lblHeartbeat.setText("Heartbeat value is "+message.isHeartbeat()+", received on:");
+				//Set timeReceived value for lblHeartbeat
+			    lblTimeReceived.setText(message.getTimeReceived());
+			} else{
+				//Set window components in disabled state
+				contentPane.setBackground(Color.LIGHT_GRAY);
+				panel.setBackground(Color.LIGHT_GRAY);
 				ledLabel.setIcon(new ImageIcon(ledBW));
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//Set isHeartbeat value for lblHeartbeat
+				lblHeartbeat.setText("Heartbeat value is null, received on:");
+				//Set timeReceived value for lblHeartbeat
+			    lblTimeReceived.setText("0000-00-00 00:00:00");
 			}
 		}
 	}

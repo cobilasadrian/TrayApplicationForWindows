@@ -1,17 +1,14 @@
 package com.inther.main;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-
-import javax.swing.JOptionPane;
 
 import com.inther.ui.HeartbeatWindow;
 import com.inther.ui.SensorsStateWindow;
 
 public class TrayApp{
 	
-	private static String  url = "http://172.17.41.117:8080/RESTService_v2/sensor/current/"; //address to REST API
-
 	/**
 	 * imageForTray() method adapts main icon to different sizes
 	 * @systemTray the systemTray of the system
@@ -43,21 +40,13 @@ public class TrayApp{
 	    MenuItem sensorsState = new MenuItem("Sensors state");
 	    sensorsState.addActionListener(new ActionListener() {
 	        @Override
-	        public void actionPerformed(ActionEvent e) {
-	            try {
-	            	Message message = new JsonParser().parseJsonFromUrl(url); //receive message from Json
-	            	if(message != null){
-	            		new SensorsStateWindow(message.getPirSensorVal(),message.getLightSensorVal()); //open sensors state window
-	            	}
-	            	else{
-	            		//if message is null then show message dialog with ERROR
-	            		JOptionPane.showMessageDialog(null,"Data can not be received.","Error",JOptionPane.ERROR_MESSAGE);
-	            	}
-	            	
+	        public void actionPerformed(ActionEvent e) {	                	
+        		try {
+					new SensorsStateWindow(); //open sensors state window	
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}        
+				}            	
 	        }
 	    });     
 	    trayPopupMenu.add(sensorsState);
@@ -68,14 +57,7 @@ public class TrayApp{
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
 	            try {
-	            	Message message = new JsonParser().parseJsonFromUrl(url); //receive message from Json
-	            	if(message != null){
-	            		new HeartbeatWindow(message.isHeartbeat(),message.getTimeReceived()); //open heartbeat window
-	            	}
-	            	else{
-	            		//if message is null then show message dialog with ERROR
-	            		JOptionPane.showMessageDialog(null,"Data can not be received.","Error",JOptionPane.ERROR_MESSAGE);
-	            	}
+	            	new HeartbeatWindow(); //open heartbeat window
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

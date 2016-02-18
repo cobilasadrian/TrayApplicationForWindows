@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
@@ -55,4 +56,5 @@ public class JsonParser {
 		}
 		return message;
 	}
+
 }
