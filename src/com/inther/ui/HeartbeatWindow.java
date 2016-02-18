@@ -64,7 +64,7 @@ public class HeartbeatWindow extends JFrame {
 		this.setIconImages(imageList);
 		
 		//Make led in out state
-		ledLabel = new JLabel(new ImageIcon(ledBW));
+		ledLabel = new JLabel("Led");
 		
 		//Create a JPanel and add it in GroupLayout with ledLabel
 		panel = new JPanel();
@@ -109,6 +109,7 @@ public class HeartbeatWindow extends JFrame {
 	}
 	
 	class ScheduledTask extends TimerTask {
+		
 		public void run() {
 			
 			Message message = new JsonParser().parseJsonFromUrl(URL); //Receive message from Json

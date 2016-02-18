@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import com.inther.main.JsonParser;
 import com.inther.main.Message;
 import static com.inther.model.AppConfig.URL;
+import static com.inther.model.AppConfig.LIGHT_THRESHOLD_VAL;
 
 import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
@@ -45,6 +46,7 @@ public class SensorsStateWindow extends JFrame {
 	private JLabel lblState1;
 	private JLabel lblState2;
 	private JLabel ledLabel;
+	private JLabel lblPresence;
 	
 	/**
 	 * SensorsStateWindow constructor create the frame.
@@ -73,23 +75,28 @@ public class SensorsStateWindow extends JFrame {
 		this.setIconImages(imageList);
 		
 		//Make led in out state
-		ledLabel = new JLabel(new ImageIcon(ledBW));
+		ledLabel = new JLabel("Led");
+		lblPresence = new JLabel("Nobody is in the room");
 		
 		//Create a JPanel and add it in GroupLayout with ledLabel
 		panel = new JPanel();
 		panel.setBackground(Color.LIGHT_GRAY);
+
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
 				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-					.addContainerGap()
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(lblPresence)
+					.addPreferredGap(ComponentPlacement.RELATED, 181, Short.MAX_VALUE)
 					.addComponent(ledLabel))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(ledLabel)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(ledLabel)
+						.addComponent(lblPresence))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE))
 		);
@@ -139,8 +146,8 @@ public class SensorsStateWindow extends JFrame {
 		public void run() {
 			
 			Message message = new JsonParser().parseJsonFromUrl(URL); //Receive message from Json
-			
 			if(message !=null){
+				
 				contentPane.setBackground(Color.WHITE);
 				panel.setBackground(Color.WHITE);
 				//make the LED blink for a second
@@ -152,17 +159,26 @@ public class SensorsStateWindow extends JFrame {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+
+				//Check if somebody is in the room
+				if((message.getPirSensorVal()==true)||(message.getLightSensorVal()>LIGHT_THRESHOLD_VAL)){
+					lblPresence.setText("Anyone is in the room");
+				} else{
+					lblPresence.setText("Nobody is in the room");
+				}
+				
 				//Set lblMotionImg and lblState1 value depending on the pirSensorVal received 
 				if(message.getPirSensorVal()==true){
 					lblMotionImg.setIcon(new ImageIcon(motion));
-					lblState1.setText("is detected");
+					lblState1.setText("is detected");	
 				}
 				else {
 					lblMotionImg.setIcon(new ImageIcon(motionBW));
 					lblState1.setText("not detected");	
 				}
+				
 				//Set lblLightImg and lblState2 value depending on the lightSensorVal received 
-				if(message.getLightSensorVal()<50){
+				if(message.getLightSensorVal()<LIGHT_THRESHOLD_VAL){
 					lblLightImg.setIcon(new ImageIcon(lightBW));
 					lblState2.setText("not detected");
 				}
@@ -170,6 +186,7 @@ public class SensorsStateWindow extends JFrame {
 					lblLightImg.setIcon(new ImageIcon(light));
 					lblState2.setText("is detected");
 				}
+				
 			} else{
 				//Set window components in disabled state
 				contentPane.setBackground(Color.LIGHT_GRAY);
@@ -178,7 +195,8 @@ public class SensorsStateWindow extends JFrame {
 				lblMotionImg.setIcon(new ImageIcon(motionBW));
 				lblState1.setText("not detected");
 				lblLightImg.setIcon(new ImageIcon(lightBW));
-				lblState2.setText("not detected");				
+				lblState2.setText("not detected");
+				lblPresence.setText("Nobody is in the room");
 			}
 		}
 	}
