@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import com.inther.ui.HeartbeatWindow;
 import com.inther.ui.SensorsStateWindow;
+import com.inther.ui.ThresholdValuesWindow;
 
 public class TrayApp{
 	
@@ -42,7 +43,7 @@ public class TrayApp{
 	        @Override
 	        public void actionPerformed(ActionEvent e) {	                	
         		try {
-					new SensorsStateWindow(); //open sensors state window	
+					new SensorsStateWindow(); //open Sensors state window	
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -57,7 +58,7 @@ public class TrayApp{
 	        @Override
 	        public void actionPerformed(ActionEvent e) {
 	            try {
-	            	new HeartbeatWindow(); //open heartbeat window
+	            	new HeartbeatWindow(); //open Heartbeat window
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -67,6 +68,22 @@ public class TrayApp{
 	    trayPopupMenu.add(heartbeat);
 	
 	    //3rd menuitem of popupmenu
+	    MenuItem thresholdValues = new MenuItem("Threshold Values");
+	    thresholdValues.addActionListener(new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	        	try {
+					new ThresholdValuesWindow(); //open ThresholdValues window
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} //open ThresholdValues window
+	        	
+	        }
+	    });
+	    trayPopupMenu.add(thresholdValues);
+	    
+	    //4th menuitem of popupmenu
 	    MenuItem close = new MenuItem("Close");
 	    close.addActionListener(new ActionListener() {
 	        @Override
@@ -78,7 +95,7 @@ public class TrayApp{
 	
 	    //setting tray icon
 	    TrayIcon trayIcon = new TrayIcon(image, "Sensors current state (right click)", trayPopupMenu);
-	    //adjust to default size as per system recommendation 
+	    //adjust to default size as per system recommendation
 	    trayIcon.setImageAutoSize(true);
 	
 	    try{

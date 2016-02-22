@@ -8,9 +8,10 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import com.inther.main.JsonParser;
-import com.inther.main.Message;
-import static com.inther.model.AppConfig.URL;
-import static com.inther.model.AppConfig.LIGHT_THRESHOLD_VAL;
+import com.inther.model.Message;
+
+import static com.inther.model.AppConfig.SENZOR_CURRENT_STATE_URL;
+import static com.inther.model.AppConfig.GET_LIGHT_THRESHOLD_URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
@@ -142,12 +143,12 @@ public class SensorsStateWindow extends JFrame {
 			
 	}	
 	
-	class ScheduledTask extends TimerTask {
+	private class ScheduledTask extends TimerTask {
 		public void run() {
+			Message message = new JsonParser().getSensorCurrentData(SENZOR_CURRENT_STATE_URL); //Receive message from Json
+			int lightThreshold = new JsonParser().getSensorSettings(GET_LIGHT_THRESHOLD_URL,"lightThreshold"); //Receive lightThreshold from Json
 			
-			Message message = new JsonParser().parseJsonFromUrl(URL); //Receive message from Json
-			if(message !=null){
-				
+			if((message !=null)&&(lightThreshold!=0)){
 				contentPane.setBackground(Color.WHITE);
 				panel.setBackground(Color.WHITE);
 				//make the LED blink for a second
@@ -161,7 +162,7 @@ public class SensorsStateWindow extends JFrame {
 				}
 
 				//Check if somebody is in the room
-				if((message.getPirSensorVal()==true)||(message.getLightSensorVal()>LIGHT_THRESHOLD_VAL)){
+				if((message.getPirSensorVal()==true)||(message.getLightSensorVal()>lightThreshold)){
 					lblPresence.setText("Anyone is in the room");
 				} else{
 					lblPresence.setText("Nobody is in the room");
@@ -178,7 +179,7 @@ public class SensorsStateWindow extends JFrame {
 				}
 				
 				//Set lblLightImg and lblState2 value depending on the lightSensorVal received 
-				if(message.getLightSensorVal()<LIGHT_THRESHOLD_VAL){
+				if(message.getLightSensorVal()<lightThreshold){
 					lblLightImg.setIcon(new ImageIcon(lightBW));
 					lblState2.setText("not detected");
 				}

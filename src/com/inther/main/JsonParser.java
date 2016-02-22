@@ -11,6 +11,8 @@ import java.nio.charset.Charset;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.inther.model.Message;
+
 public class JsonParser {
 
 	/**
@@ -26,10 +28,10 @@ public class JsonParser {
 	}
 	
 	/**
-	 * The parseJsonFromUrl() return Message object from JSON
+	 * The getSensorCurrentData() return Message object from JSON
 	 * @url address where is Json
 	 */
-	public Message parseJsonFromUrl(String url){
+	public Message getSensorCurrentData(String url){
 		
 		Message message = null;
 		try {
@@ -44,11 +46,9 @@ public class JsonParser {
 			
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
-			
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-		
 			e.printStackTrace();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -57,4 +57,31 @@ public class JsonParser {
 		return message;
 	}
 
+	
+	/**
+	 * The getSensorSettings() return Sensors settings, HBFrequency or LightThreshold
+	 * @url address where is Json
+	 * @value can be HBFrequency or lightThreshold
+	 */
+	public int getSensorSettings(String url,String value){
+		int val = 0;
+		try {
+			InputStream is = new URL(url).openStream();
+			BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+			String jsonText = readAll(rd);
+			JSONObject  json = new JSONObject(jsonText);
+			val = (int) json.get(value);
+			
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return val;
+	}
 }

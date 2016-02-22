@@ -8,8 +8,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import com.inther.main.JsonParser;
-import com.inther.main.Message;
-import static com.inther.model.AppConfig.URL;
+import com.inther.model.Message;
+
+import static com.inther.model.AppConfig.SENZOR_CURRENT_STATE_URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
@@ -71,18 +72,19 @@ public class HeartbeatWindow extends JFrame {
 		panel.setBackground(Color.LIGHT_GRAY);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(ledLabel))
+				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(ledLabel)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE))
+					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 64, Short.MAX_VALUE)
+					.addContainerGap())
 		);
 		//Set GroupLayout for contentPane
 		contentPane.setLayout(gl_contentPane);
@@ -108,11 +110,9 @@ public class HeartbeatWindow extends JFrame {
 			
 	}
 	
-	class ScheduledTask extends TimerTask {
-		
+	private class ScheduledTask extends TimerTask {
 		public void run() {
-			
-			Message message = new JsonParser().parseJsonFromUrl(URL); //Receive message from Json
+			Message message = new JsonParser().getSensorCurrentData(SENZOR_CURRENT_STATE_URL); //Receive message from Json
 			
 			if(message !=null){
 				contentPane.setBackground(Color.WHITE);

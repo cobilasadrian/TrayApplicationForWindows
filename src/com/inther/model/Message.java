@@ -1,4 +1,4 @@
-package com.inther.main;
+package com.inther.model;
 
 public class Message {
 
