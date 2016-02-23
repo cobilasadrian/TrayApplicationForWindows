@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import com.inther.main.JsonParser;
 import com.inther.model.Message;
 
+import static com.inther.model.AppConfig.GET_HB_FREQUENCY_URL;
 import static com.inther.model.AppConfig.SENZOR_CURRENT_STATE_URL;
 
 import javax.imageio.ImageIO;
@@ -24,7 +25,10 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -32,7 +36,8 @@ public class HeartbeatWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	//Read images from resources
-	private BufferedImage led = ImageIO.read(new File("src/com/inther/resources/led.png"));
+	private BufferedImage greenLed = ImageIO.read(new File("src/com/inther/resources/green_led.png"));
+	private BufferedImage redLed = ImageIO.read(new File("src/com/inther/resources/red_led.png"));
 	private BufferedImage ledBW = ImageIO.read(new File("src/com/inther/resources/ledb&w.png"));
 	
 	private JPanel contentPane;
@@ -47,7 +52,7 @@ public class HeartbeatWindow extends JFrame {
 	public HeartbeatWindow() throws IOException {
 		this.setVisible(true);
 		this.setTitle("Heartbeat");
-		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setSize(280, 120);
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
@@ -113,17 +118,29 @@ public class HeartbeatWindow extends JFrame {
 	private class ScheduledTask extends TimerTask {
 		public void run() {
 			Message message = new JsonParser().getSensorCurrentData(SENZOR_CURRENT_STATE_URL); //Receive message from Json
+			int HBFrequency = new JsonParser().getSensorSettings(GET_HB_FREQUENCY_URL,"HBFrequency"); //Receive HBFrequency from Json
 			
 			if(message !=null){
 				contentPane.setBackground(Color.WHITE);
-				panel.setBackground(Color.WHITE);
-				
+				panel.setBackground(Color.WHITE);				
 				//make the LED blink for a second
 				try {
-					ledLabel.setIcon(new ImageIcon(led));
+					SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date timeReceived = parser.parse(message.getTimeReceived());
+					timeReceived.setTime(timeReceived.getTime() + HBFrequency*1000);
+					Date now = new Date();
+					//if last HBFrequency seconds did not receive any messages then make the red LED else green
+					if(timeReceived.before(now)){
+						ledLabel.setIcon(new ImageIcon(redLed));
+					}else{
+						ledLabel.setIcon(new ImageIcon(greenLed));
+					}
 					Thread.sleep(1000);
 					ledLabel.setIcon(new ImageIcon(ledBW));
 				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

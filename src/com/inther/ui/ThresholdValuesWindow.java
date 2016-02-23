@@ -50,7 +50,7 @@ public class ThresholdValuesWindow extends JFrame {
 	public ThresholdValuesWindow() throws IOException {
 		this.setVisible(true);
 		this.setTitle("Threshold Values");
-		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setSize(235, 220);
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
@@ -82,7 +82,6 @@ public class ThresholdValuesWindow extends JFrame {
 		panel_1.setBackground(Color.LIGHT_GRAY);
 		
 		JLabel lblEditLightThreshold = new JLabel("Edit:");
-		
 		JLabel lblEditHeartbeatFrequency = new JLabel("Edit:");
 		
 		lblStatus1 = new JLabel();
@@ -199,7 +198,7 @@ public class ThresholdValuesWindow extends JFrame {
 		public void run() {
 			int lightThreshold = new JsonParser().getSensorSettings(GET_LIGHT_THRESHOLD_URL,"lightThreshold"); //Receive lightThreshold from Json
 			int HBFrequency = new JsonParser().getSensorSettings(GET_HB_FREQUENCY_URL,"HBFrequency"); //Receive HBFrequency from Json
-			//Ser lightThreshold and HBFrequency values if if they are not null
+			//Set lightThreshold and HBFrequency values if if they are not null
 			if((lightThreshold!=0) && (HBFrequency!=0)){
 				lblVal1.setText(Integer.toString(lightThreshold));
 				lblVal2.setText(Integer.toString(HBFrequency));
