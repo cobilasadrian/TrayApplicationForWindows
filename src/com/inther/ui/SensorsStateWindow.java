@@ -37,10 +37,10 @@ public class SensorsStateWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	//Read images from resources
-	private BufferedImage motion = ImageIO.read(new File("src/com/inther/resources/motion64x64.png"));
-	private BufferedImage motionBW = ImageIO.read(new File("src/com/inther/resources/motion64x64b&w.png"));
-	private BufferedImage light = ImageIO.read(new File("src/com/inther/resources/light64x64.png"));
-	private BufferedImage lightBW = ImageIO.read(new File("src/com/inther/resources/light64x64b&w.png"));
+	private BufferedImage motion = ImageIO.read(new File("src/com/inther/resources/motion.png"));
+	private BufferedImage no_motion = ImageIO.read(new File("src/com/inther/resources/no_motion72x64.png"));
+	private BufferedImage light = ImageIO.read(new File("src/com/inther/resources/light.png"));
+	private BufferedImage lightBW = ImageIO.read(new File("src/com/inther/resources/no_light72x64.png"));
 	private BufferedImage greenLed = ImageIO.read(new File("src/com/inther/resources/green_led.png"));
 	private BufferedImage redLed = ImageIO.read(new File("src/com/inther/resources/red_led.png"));
 	private BufferedImage ledBW = ImageIO.read(new File("src/com/inther/resources/ledb&w.png"));
@@ -90,21 +90,23 @@ public class SensorsStateWindow extends JFrame {
 
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
+					.addContainerGap()
 					.addComponent(lblPresence)
-					.addPreferredGap(ComponentPlacement.RELATED, 181, Short.MAX_VALUE)
-					.addComponent(ledLabel))
+					.addPreferredGap(ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
+					.addComponent(ledLabel)
+					.addContainerGap())
+				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(ledLabel)
-						.addComponent(lblPresence))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE))
+						.addComponent(lblPresence)
+						.addComponent(ledLabel))
+					.addPreferredGap(ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+					.addComponent(panel, GroupLayout.PREFERRED_SIZE, 177, GroupLayout.PREFERRED_SIZE))
 		);
 		//Set GroupLayout for contentPane
 		contentPane.setLayout(gl_contentPane);
@@ -112,18 +114,16 @@ public class SensorsStateWindow extends JFrame {
 		panel.setLayout(new GridLayout(3,2));
 		
 		JLabel lblMotion = new JLabel("Motion");
-		lblMotion.setVerticalAlignment(SwingConstants.TOP);
 		lblMotion.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMotion.setFont(new Font("Segoe UI", Font.BOLD, 18));
 		panel.add(lblMotion);
 		
 		JLabel lblLight = new JLabel("Light");
-		lblLight.setVerticalAlignment(SwingConstants.TOP);
 		lblLight.setHorizontalAlignment(SwingConstants.CENTER);
 		lblLight.setFont(new Font("Segoe UI", Font.BOLD, 18));
 		panel.add(lblLight);
 	
-		lblMotionImg = new JLabel(new ImageIcon(motionBW));
+		lblMotionImg = new JLabel(new ImageIcon(no_motion));
 		lblMotionImg.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblMotionImg);
 		
@@ -144,7 +144,7 @@ public class SensorsStateWindow extends JFrame {
 		//Execute periodic parsing operation and modifying data
 		Timer time = new Timer(); //Instantiate Timer Object
 		ScheduledTask st = new ScheduledTask(); //Instantiate SheduledTask class
-		time.schedule(st, 0, 5000); //Create Repetitively task for every 5 secs	
+		time.schedule(st, 0, 2000); //Create Repetitively task for every 2 secs	
 			
 	}	
 	
@@ -192,7 +192,7 @@ public class SensorsStateWindow extends JFrame {
 					lblState1.setText("is detected");	
 				}
 				else {
-					lblMotionImg.setIcon(new ImageIcon(motionBW));
+					lblMotionImg.setIcon(new ImageIcon(no_motion));
 					lblState1.setText("not detected");	
 				}
 				
@@ -211,7 +211,7 @@ public class SensorsStateWindow extends JFrame {
 				contentPane.setBackground(Color.LIGHT_GRAY);
 				panel.setBackground(Color.LIGHT_GRAY);
 				ledLabel.setIcon(new ImageIcon(ledBW));
-				lblMotionImg.setIcon(new ImageIcon(motionBW));
+				lblMotionImg.setIcon(new ImageIcon(no_motion));
 				lblState1.setText("not detected");
 				lblLightImg.setIcon(new ImageIcon(lightBW));
 				lblState2.setText("not detected");

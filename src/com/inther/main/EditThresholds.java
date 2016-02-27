@@ -7,7 +7,11 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 public class EditThresholds {
-	
+	/**
+	 * The sendPostRequest() set Sensors settings, HBFrequency or LightThreshold
+	 * @url address for Post request
+	 * @json can be HBFrequency or lightThreshold in format JSON
+	 */
 	public int sendPostRequest(String url,String json){
 		
 		HttpClient httpClient = new DefaultHttpClient();

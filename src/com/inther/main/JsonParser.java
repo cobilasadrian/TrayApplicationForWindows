@@ -16,7 +16,7 @@ import com.inther.model.Message;
 public class JsonParser {
 
 	/**
-	 * The readAll() return JSON string from reader
+	 * readAll() return JSON string from reader
 	 */
 	private static String readAll(Reader rd) throws IOException {
 	    StringBuilder sb = new StringBuilder();
@@ -28,7 +28,7 @@ public class JsonParser {
 	}
 	
 	/**
-	 * The getSensorCurrentData() return Message object from JSON
+	 * getSensorCurrentData() return Message object from JSON
 	 * @url address where is Json
 	 */
 	public Message getSensorCurrentData(String url){
@@ -56,10 +56,9 @@ public class JsonParser {
 		}
 		return message;
 	}
-
 	
 	/**
-	 * The getSensorSettings() return Sensors settings, HBFrequency or LightThreshold
+	 * getSensorSettings() return Sensors settings, HBFrequency or LightThreshold
 	 * @url address where is Json
 	 * @value can be HBFrequency or lightThreshold
 	 */

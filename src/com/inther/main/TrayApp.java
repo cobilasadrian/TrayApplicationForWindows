@@ -103,6 +103,5 @@ public class TrayApp{
 	    }catch(AWTException awtException){
 	        awtException.printStackTrace();
 	    }
-	
 	}
 }

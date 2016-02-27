@@ -78,10 +78,11 @@ public class HeartbeatWindow extends JFrame {
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(ledLabel))
 				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addContainerGap(237, Short.MAX_VALUE)
+					.addComponent(ledLabel)
+					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -97,7 +98,7 @@ public class HeartbeatWindow extends JFrame {
 		panel.setLayout(new GridLayout(3,2));
 		
 		//Set isHeartbeat value for lblHeartbeat
-		lblHeartbeat = new JLabel("Heartbeat value is null, received on:");
+		lblHeartbeat = new JLabel("Heartbeat value is null, received on");
     	lblHeartbeat.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 		lblHeartbeat.setHorizontalAlignment(SwingConstants.CENTER);
 		panel.add(lblHeartbeat);
@@ -111,7 +112,7 @@ public class HeartbeatWindow extends JFrame {
 		//Execute periodic parsing operation and modifying data
 		Timer time = new Timer(); //Instantiate Timer Object
 		ScheduledTask st = new ScheduledTask(); //Instantiate SheduledTask class
-		time.schedule(st, 0, 5000); //Create Repetitively task for every 5 secs
+		time.schedule(st, 0, 2000); //Create Repetitively task for every 2 secs
 			
 	}
 	
@@ -146,7 +147,7 @@ public class HeartbeatWindow extends JFrame {
 				}
 				
 				//Set isHeartbeat value for lblHeartbeat
-				lblHeartbeat.setText("Heartbeat value is "+message.isHeartbeat()+", received on:");
+				lblHeartbeat.setText("Heartbeat value is "+message.isHeartbeat()+", received on");
 				//Set timeReceived value for lblHeartbeat
 			    lblTimeReceived.setText(message.getTimeReceived());
 			} else{
@@ -155,7 +156,7 @@ public class HeartbeatWindow extends JFrame {
 				panel.setBackground(Color.LIGHT_GRAY);
 				ledLabel.setIcon(new ImageIcon(ledBW));
 				//Set isHeartbeat value for lblHeartbeat
-				lblHeartbeat.setText("Heartbeat value is null, received on:");
+				lblHeartbeat.setText("Heartbeat value is null, received on");
 				//Set timeReceived value for lblHeartbeat
 			    lblTimeReceived.setText("0000-00-00 00:00:00");
 			}

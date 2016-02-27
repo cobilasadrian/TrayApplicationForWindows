@@ -165,7 +165,7 @@ public class ThresholdValuesWindow extends JFrame {
 		//Execute periodic parsing operation and modifying data
 		Timer time = new Timer(); //Instantiate Timer Object
 		ScheduledTask st = new ScheduledTask(); //Instantiate SheduledTask class
-		time.schedule(st, 0, 5000); //Create Repetitively task for every 5 secs
+		time.schedule(st, 0, 2000); //Create Repetitively task for every 2 secs
 	}
 	
 	private class ButtonClickListener implements ActionListener{
